@@ -1,0 +1,46 @@
+name: Weekly digest
+
+# Runs the full pipeline: scrape every tracked competitor (which triggers
+# diff + Gemini summarization into digest_events for any meaningful change),
+# then emails each user their unsent digest_events for the week.
+#
+# Runs Monday 07:00 UTC — matches the "digest sends Monday 07:00" copy used
+# throughout the app. There's no per-user timezone handling yet, so this is
+# UTC for everyone, not each user's actual local time.
+on:
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch: {} # lets you trigger a run manually from the Actions tab
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+      NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Scrape all tracked competitors
+        run: npm run scrape
+
+      - name: Send digest emails
+        if: always() # still send whatever digest_events scraping did produce, even if some competitors failed above
+        run: npm run send-digests

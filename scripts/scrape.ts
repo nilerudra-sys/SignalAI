@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 config({ path: '.env.local' });
 import { scrapeUrl } from '../lib/scraper';
@@ -11,16 +11,10 @@ const SECRET_KEY = process.env.SUPABASE_SECRET_KEY;
 
 if (!SUPABASE_URL || !SECRET_KEY) {
   console.error(
-    'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SECRET_KEY in .env.local.\n' +
+    'Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SECRET_KEY.\n' +
       'SUPABASE_SECRET_KEY is the project’s Secret key (Project Settings -> API) — ' +
       'this script needs it to bypass RLS and write snapshots directly.',
   );
-  process.exit(1);
-}
-
-const competitorId = process.argv[2];
-if (!competitorId) {
-  console.error('Usage: npm run scrape -- <competitor_id>');
   process.exit(1);
 }
 
@@ -28,20 +22,16 @@ if (!competitorId) {
 // browser or commit it — it has full read/write access to every table.
 const supabase = createClient(SUPABASE_URL, SECRET_KEY);
 
+type Competitor = {
+  id: string;
+  name: string;
+  pricing_page_url: string;
+  changelog_url: string | null;
+};
+
 type ScrapeTarget = { pageType: 'pricing' | 'changelog'; url: string };
 
-async function main() {
-  const { data: competitor, error } = await supabase
-    .from('competitors')
-    .select('*')
-    .eq('id', competitorId)
-    .single();
-
-  if (error || !competitor) {
-    console.error(`Competitor ${competitorId} not found: ${error?.message ?? 'no matching row'}`);
-    process.exit(1);
-  }
-
+async function scrapeCompetitor(supabase: SupabaseClient, competitor: Competitor) {
   console.log(`\nScraping "${competitor.name}"`);
 
   const targets: ScrapeTarget[] = [{ pageType: 'pricing', url: competitor.pricing_page_url }];
@@ -136,8 +126,63 @@ async function main() {
   }
 }
 
+async function main() {
+  const competitorId = process.argv[2];
+
+  if (competitorId) {
+    const { data: competitor, error } = await supabase
+      .from('competitors')
+      .select('*')
+      .eq('id', competitorId)
+      .single();
+
+    if (error || !competitor) {
+      console.error(`Competitor ${competitorId} not found: ${error?.message ?? 'no matching row'}`);
+      process.exit(1);
+    }
+
+    await scrapeCompetitor(supabase, competitor);
+    return;
+  }
+
+  // No competitor_id given — scrape every tracked competitor. This is the
+  // mode the weekly GitHub Actions job runs (see .github/workflows).
+  const { data: competitors, error } = await supabase.from('competitors').select('*');
+
+  if (error) {
+    console.error(`Failed to list competitors: ${error.message}`);
+    process.exit(1);
+  }
+
+  if (!competitors || competitors.length === 0) {
+    console.log('No tracked competitors. Nothing to scrape.');
+    return;
+  }
+
+  console.log(`Scraping ${competitors.length} competitor(s)...`);
+
+  let failures = 0;
+  for (const competitor of competitors) {
+    try {
+      await scrapeCompetitor(supabase, competitor);
+    } catch (err) {
+      failures += 1;
+      console.error(
+        `\nUnhandled error scraping "${competitor.name}": ${err instanceof Error ? err.message : err}`,
+      );
+    }
+  }
+
+  console.log(`\n${'='.repeat(70)}`);
+  console.log(`Done. ${competitors.length - failures}/${competitors.length} competitors scraped without a fatal error.`);
+
+  if (failures > 0) {
+    process.exitCode = 1;
+  }
+}
+
 main()
-  .then(() => process.exit(0))
+  .then(() => process.exit(process.exitCode ?? 0))
   .catch((err) => {
     console.error(err);
     process.exit(1);
