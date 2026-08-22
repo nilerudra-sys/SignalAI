@@ -230,6 +230,52 @@ The page reads every user (`auth.users`) and their `profiles` row using
 (the admin page and its Server Action) that has already verified the caller
 is the admin; never import it from a `"use client"` component.
 
+## Weekly automation
+
+`.github/workflows/weekly-digest.yml` runs the whole pipeline every Monday at
+07:00 UTC: `npm run scrape` (no argument — scrapes every tracked competitor,
+which triggers diff + Gemini summarization for anything meaningful), then
+`npm run send-digests`.
+
+It runs on GitHub's own `ubuntu-latest` runners rather than Vercel Cron
+specifically because the scraper needs a real headless Chromium
+(`playwright install --with-deps chromium`) as a fallback for JS-heavy pages
+— that's a full VM step here, but a genuinely painful bundle-size/cold-start
+problem on serverless platforms like Vercel.
+
+### One-time setup
+
+Add these as **repository secrets** (GitHub repo -> Settings -> Secrets and
+variables -> Actions -> New repository secret), using the same values from
+your local `.env.local`:
+
+| Secret | Required |
+| --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | yes |
+| `SUPABASE_SECRET_KEY` | yes |
+| `GEMINI_API_KEY` | yes |
+| `GEMINI_MODEL` | no — falls back to `gemini-3.6-flash` |
+| `RESEND_API_KEY` | yes |
+| `RESEND_FROM_EMAIL` | no — falls back to the `onboarding@resend.dev` sandbox sender |
+| `NEXT_PUBLIC_SITE_URL` | no — used for the digest email's settings link |
+
+### Checking it ran / where to see logs
+
+1. Go to the **Actions** tab on the GitHub repo.
+2. Click **Weekly digest** in the left sidebar to see every past run, with a
+   green check or red X for each.
+3. Click into any run, then click the `run-pipeline` job to expand it — each
+   step (`Scrape all tracked competitors`, `Send digest emails`) has its own
+   log, which is exactly what you'd see running `npm run scrape` /
+   `npm run send-digests` locally: which competitor is being scraped, the
+   extracted text, any diff found, the Gemini summary, and the Resend send
+   result.
+4. To test it right now instead of waiting for Monday: **Actions -> Weekly
+   digest -> Run workflow** (this works because of the `workflow_dispatch`
+   trigger in the YAML).
+5. GitHub emails the repo's owner automatically if a scheduled or manual run
+   fails — no extra setup needed for that.
+
 ## Available scripts
 
 | Script                              | Description                                    |
