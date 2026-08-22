@@ -3,25 +3,88 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --background: #0a0e14;
+  --foreground: #e7eaee;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --ink: #0a0e14;
+  --ink-raised: #10151d;
+  --ink-raised-2: #141a23;
+  --ink-border: #1e2733;
+
+  --muted: #8993a3;
+  --muted-dim: #5c6673;
+
+  --signal: #fbbf24;
+  --signal-soft: rgba(251, 191, 36, 0.12);
+
+  --diff-add: #4ade80;
+  --diff-add-bg: rgba(74, 222, 128, 0.09);
+  --diff-remove: #fb7185;
+  --diff-remove-bg: rgba(251, 113, 133, 0.09);
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ink);
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--ink-border) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--ink-border) 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+}
+
+@keyframes scan {
+  0% {
+    top: -1%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.7;
+  }
+  92% {
+    opacity: 0.7;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.animate-scan {
+  animation: scan 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scan {
+    animation: none;
+    display: none;
+  }
+}
+
+@keyframes sig-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.animate-sig-blink {
+  animation: sig-blink 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sig-blink {
+    animation: none;
   }
 }
