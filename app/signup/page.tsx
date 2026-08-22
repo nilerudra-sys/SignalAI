@@ -48,9 +48,9 @@ export default function SignupPage() {
   if (checkEmail) {
     return (
       <AuthCard title="Check your email">
-        <p className="text-sm leading-relaxed text-muted">
-          We sent a confirmation link to <span className="text-foreground">{email}</span>. Click
-          it to finish creating your account.
+        <p className="text-sm leading-relaxed text-slate">
+          We sent a confirmation link to <span className="text-graphite">{email}</span>. Click it
+          to finish creating your account.
         </p>
       </AuthCard>
     );
@@ -63,7 +63,7 @@ export default function SignupPage() {
       footer={
         <>
           Already have an account?{' '}
-          <Link href="/login" className="font-medium text-signal">
+          <Link href="/login" className="font-medium text-cobalt">
             Log in
           </Link>
         </>
@@ -90,21 +90,21 @@ export default function SignupPage() {
           placeholder="At least 6 characters"
         />
 
-        {error && <p className="text-sm text-diff-remove">{error}</p>}
+        {error && <p className="text-sm text-rose">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-signal px-4 py-2.5 text-sm font-medium text-ink transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="w-full rounded-md bg-cobalt px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {loading ? 'Creating account…' : 'Sign up'}
         </button>
       </form>
 
       <div className="my-6 flex items-center gap-3">
-        <div className="h-px flex-1 bg-ink-border" />
-        <span className="text-xs text-muted-dim">OR</span>
-        <div className="h-px flex-1 bg-ink-border" />
+        <div className="h-px flex-1 bg-hairline" />
+        <span className="text-xs text-slate-dim">OR</span>
+        <div className="h-px flex-1 bg-hairline" />
       </div>
 
       <GoogleButton />

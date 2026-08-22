@@ -5,8 +5,10 @@ competitors — changelogs, pricing pages, landing pages, review sites, and more
 distills what changed into a short, digestible briefing, so a solo founder can stay on
 top of the competitive landscape without spending hours manually checking sites.
 
-This repository currently has a public landing page and account authentication
-(email/password + Google). Competitor tracking and digests haven't been built yet.
+This repository has a public landing page with a live "quick check" pricing
+lookup, account authentication (email/password + Google), a dashboard for
+tracking competitors, and a full scrape -> diff -> AI-summarize -> email
+pipeline that runs weekly via GitHub Actions.
 
 ## Tech stack
 
@@ -163,6 +165,29 @@ users (only a trusted backend job should be creating snapshots). Get it from
 **Project Settings -> API -> Secret key** and set `SUPABASE_SECRET_KEY` in
 `.env.local` (see `.env.example`). Never expose this key to the browser or
 commit it — it bypasses Row Level Security entirely.
+
+### Quick check (public, unauthenticated)
+
+The landing page has a live "check a company's pricing page instantly"
+widget (`components/QuickCheck.tsx` -> `POST /api/quick-check` ->
+`lib/quickCheck.ts`). A visitor enters a domain, we guess the pricing URL by
+trying a few common paths (`/pricing`, `/price`, `/plans`) and show a short
+excerpt — no signup, no saved data, just a one-off read.
+
+Because this endpoint is public and takes arbitrary visitor input, it's
+deliberately more locked down than the authenticated scraper:
+
+- **Fetch only, no Playwright.** Never spins up a headless browser for
+  anonymous traffic.
+- **SSRF guard.** Resolves the hostname via DNS and rejects anything that
+  points at a private/loopback/link-local address (including cloud metadata
+  endpoints like `169.254.169.254`) before fetching — checking the resolved
+  IP, not just the hostname string, since a malicious DNS record could point
+  anywhere.
+- **Per-IP rate limit.** 5 checks/minute, in-memory. This resets on restart
+  and doesn't share state across instances — fine for a single-process
+  conversion widget, not a hardened public API. Revisit if this ever needs
+  multi-instance deployment.
 
 ## Diffing and AI summaries
 

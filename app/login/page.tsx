@@ -46,7 +46,7 @@ function LoginForm() {
       footer={
         <>
           Don&rsquo;t have an account?{' '}
-          <Link href="/signup" className="font-medium text-signal">
+          <Link href="/signup" className="font-medium text-cobalt">
             Sign up
           </Link>
         </>
@@ -72,21 +72,21 @@ function LoginForm() {
           placeholder="••••••••"
         />
 
-        {error && <p className="text-sm text-diff-remove">{error}</p>}
+        {error && <p className="text-sm text-rose">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-signal px-4 py-2.5 text-sm font-medium text-ink transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="w-full rounded-md bg-cobalt px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {loading ? 'Logging in…' : 'Log in'}
         </button>
       </form>
 
       <div className="my-6 flex items-center gap-3">
-        <div className="h-px flex-1 bg-ink-border" />
-        <span className="text-xs text-muted-dim">OR</span>
-        <div className="h-px flex-1 bg-ink-border" />
+        <div className="h-px flex-1 bg-hairline" />
+        <span className="text-xs text-slate-dim">OR</span>
+        <div className="h-px flex-1 bg-hairline" />
       </div>
 
       <GoogleButton />

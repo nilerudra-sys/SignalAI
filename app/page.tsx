@@ -1,6 +1,6 @@
 import { SiteHeader } from '@/components/SiteHeader';
 import { Hero } from '@/components/Hero';
-import { PricingCheckDemo } from '@/components/PricingCheckDemo';
+import { QuickCheck } from '@/components/QuickCheck';
 import { SampleDigest } from '@/components/SampleDigest';
 import { PricingTeaser } from '@/components/PricingTeaser';
 import { ClosingSignup } from '@/components/ClosingSignup';
@@ -11,7 +11,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col bg-paper font-sans text-graphite">
       <SiteHeader />
       <Hero />
-      <PricingCheckDemo />
+      <QuickCheck />
       <SampleDigest />
       <PricingTeaser />
       <ClosingSignup />

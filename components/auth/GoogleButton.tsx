@@ -30,12 +30,12 @@ export function GoogleButton() {
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="flex w-full items-center justify-center gap-2 rounded-md border border-ink-border bg-ink-raised2 px-4 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-muted-dim disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-md border border-hairline-input bg-paper-surface px-4 py-2.5 text-sm font-medium text-graphite transition-colors hover:border-slate disabled:opacity-60"
       >
         <GoogleIcon />
         {loading ? 'Redirecting…' : 'Continue with Google'}
       </button>
-      {error && <p className="mt-2 text-xs text-diff-remove">{error}</p>}
+      {error && <p className="mt-2 text-xs text-rose">{error}</p>}
     </div>
   );
 }
