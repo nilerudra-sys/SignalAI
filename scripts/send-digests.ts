@@ -76,12 +76,15 @@ async function main() {
 
   console.log(`Found unsent events for ${byUser.size} user(s).`);
 
+  let failures = 0;
+
   for (const [userId, userEvents] of byUser) {
     const { data: userData, error: userError } = await supabase.auth.admin.getUserById(userId);
     const email = userData?.user?.email;
 
     if (userError || !email) {
       console.error(`Could not resolve email for user ${userId}: ${userError?.message ?? 'no email on record'}`);
+      failures += 1;
       continue;
     }
 
@@ -111,6 +114,7 @@ async function main() {
 
     if (sendError) {
       console.error(`Failed to send to ${email}: ${sendError.message}`);
+      failures += 1;
       continue;
     }
 
@@ -124,14 +128,20 @@ async function main() {
 
     if (updateError) {
       console.error(`Sent the email but failed to mark events as sent: ${updateError.message}`);
+      failures += 1;
     } else {
       console.log(`Marked ${eventIds.length} event(s) as sent.`);
     }
   }
+
+  if (failures > 0) {
+    console.error(`\n${failures} user(s) failed to receive their digest — see errors above.`);
+    process.exitCode = 1;
+  }
 }
 
 main()
-  .then(() => process.exit(0))
+  .then(() => process.exit(process.exitCode ?? 0))
   .catch((err) => {
     console.error(err);
     process.exit(1);
