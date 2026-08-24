@@ -46,12 +46,12 @@ export async function SiteHeader() {
               <Link href="/login" className="px-3 py-1.5 text-[13.5px] font-medium text-graphite">
                 Log in
               </Link>
-              <a
-                href="/#waitlist"
+              <Link
+                href="/dashboard"
                 className="rounded-lg bg-cobalt px-3.5 py-2 text-[13.5px] font-medium text-white"
               >
-                Join waitlist
-              </a>
+                Access dashboard
+              </Link>
             </>
           )}
         </div>
