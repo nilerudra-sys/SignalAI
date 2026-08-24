@@ -39,8 +39,8 @@ export function Hero() {
 
           <div className="flex w-full flex-col gap-2.5">
             <div className="flex gap-2.5 border-b border-hairline-soft pb-2.5 text-sm text-graphite-soft">
-              <span className="shrink-0 font-mono text-[11px] text-cobalt">TRACK RECORD</span>
-              <span>184,000+ competitor pages read so far, still run by one person.</span>
+              <span className="shrink-0 font-mono text-[11px] text-cobalt">CADENCE</span>
+              <span>One digest every Monday, 07:00 UTC — nothing in between.</span>
             </div>
             <Link
               href="/signup"

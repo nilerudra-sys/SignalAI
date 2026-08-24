@@ -19,7 +19,7 @@ const FACTS = [
   { label: 'Started', value: 'Jan 2026, as a cron job' },
   { label: 'Team', value: '1' },
   { label: 'Based in', value: 'Pune, India' },
-  { label: 'Pages read so far', value: '184,000+' },
+  { label: 'Checks', value: 'Every Monday, 07:00 UTC' },
 ];
 
 export function About() {
@@ -37,8 +37,8 @@ export function About() {
             </h2>
             <p className="mt-3.5 max-w-[58ch] text-balance text-[15px] leading-relaxed text-graphite-soft">
               Signal watches the pages your competitors actually change — pricing, changelog,
-              careers — and re-reads them six times a day. When something moves, it records the
-              diff, works out whether it matters, and holds it until Monday. You get one email:
+              careers — and re-reads them every Monday. When something moves, it records the
+              diff, works out whether it matters, and holds it until then. You get one email:
               what changed, and what you should do about it.
             </p>
             <p className="mt-3.5 max-w-[58ch] text-balance text-[15px] leading-relaxed text-slate">
