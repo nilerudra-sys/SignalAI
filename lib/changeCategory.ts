@@ -29,6 +29,14 @@ export const WATCHING_CATEGORY: ChangeCategory = {
   footBg: 'bg-paper-raised',
 };
 
+export const QUEUED_CATEGORY: ChangeCategory = {
+  label: 'Queued',
+  tagBg: 'bg-cobalt-tint',
+  tagFg: 'text-cobalt',
+  dot: 'bg-cobalt',
+  footBg: 'bg-cobalt-tint',
+};
+
 export function categoryFor(changeType: DigestEvent['change_type'] | null | undefined): ChangeCategory {
   if (!changeType) return WATCHING_CATEGORY;
   return CATEGORIES[changeType];

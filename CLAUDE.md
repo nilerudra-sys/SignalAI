@@ -13,10 +13,11 @@ Repo: https://github.com/nilerudra-sys/SignalAI (branch `main`)
    PricingTeaser,ClosingSignup,SiteHeader,SiteFooter}.tsx`) — waitlist
    signup (console.log only, no backend), sample digest showcase, pricing
    teaser, and (latest addition) a real **Quick Check** widget.
-2. **Auth** — Supabase Auth, email/password + Google OAuth intended.
-   `/login`, `/signup`, `/auth/callback`. Email/password works.
-   **Google OAuth is broken — see "Known issues" below, do not assume it
-   works.**
+2. **Auth** — Supabase Auth, email/password only for now. `/login`,
+   `/signup`, `/auth/callback`, `/forgot-password`, `/reset-password`.
+   Google OAuth was removed (never got configured in Supabase, see
+   `DEBUG-NOTES.md` for the original investigation) — deliberately dropped
+   rather than left broken; add it back once it's actually set up.
 3. **Database schema** (`supabase/migrations/`) — `competitors`,
    `snapshots`, `digest_events`, `profiles` tables with RLS. See
    "Architecture" below for the shape of each.
@@ -56,23 +57,8 @@ Repo: https://github.com/nilerudra-sys/SignalAI (branch `main`)
     checks the real IP, not just the hostname string) and a per-IP
     in-memory rate limit (5/min).
 
-## Currently in progress
-
-**Debugging a login bug** — see `DEBUG-NOTES.md` for full details, don't
-duplicate that investigation here. Short version: clicking "Continue with
-Google" sends visitors to a broken Supabase OAuth redirect (raw JSON error
-page) because Google OAuth was never actually configured in the Supabase
-project, and `GoogleButton.tsx`'s error handling structurally cannot catch
-this specific failure (Supabase redirects the browser away before the
-"provider not configured" error is knowable client-side). Two ruled-out
-false alarms are also documented there — read them before re-investigating
-anything that looks similar.
-
 ## Known issues / things to watch out for
 
-- **Google OAuth is not configured** and the button currently leads to a
-  broken experience (see above). Don't assume "Continue with Google" works
-  in any testing.
 - **Resend is in sandbox mode** — no verified sending domain yet, so the
   default `onboarding@resend.dev` sender can only deliver to whatever email
   Resend's own account is registered with. Real recipients will get a 403

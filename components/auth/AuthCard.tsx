@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { SignalLogo } from '@/components/SignalLogo';
 
 export function AuthCard({
   title,
@@ -13,9 +14,13 @@ export function AuthCard({
   footer?: ReactNode;
 }) {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-paper px-6 py-16 font-sans text-graphite">
+    <main className="bg-radar flex min-h-screen flex-col items-center justify-center bg-paper px-6 py-16 font-sans text-graphite">
       <div className="w-full max-w-sm">
-        <Link href="/" className="mb-8 block text-center text-sm font-medium text-graphite">
+        <Link
+          href="/"
+          className="mb-8 flex items-center justify-center gap-2 text-center text-2xl font-semibold tracking-tight text-graphite"
+        >
+          <SignalLogo className="h-6 w-6" />
           Signal
         </Link>
 

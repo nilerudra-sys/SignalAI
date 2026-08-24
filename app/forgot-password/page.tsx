@@ -2,66 +2,52 @@
 
 import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
 
-export default function SignupPage() {
-  const router = useRouter();
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [checkEmail, setCheckEmail] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
 
     const supabase = createClient();
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    // Ignore the result either way — never reveal whether an account exists
+    // for this email. Supabase already avoids erroring on an unknown
+    // address; we just make sure our own UI can't leak it either.
+    await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
     });
 
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    if (data.session) {
-      // Email confirmation is off for this project — the user is already signed in.
-      router.push('/dashboard');
-      router.refresh();
-      return;
-    }
-
-    setCheckEmail(true);
+    setSubmitted(true);
     setLoading(false);
   }
 
-  if (checkEmail) {
+  if (submitted) {
     return (
       <AuthCard title="Check your email">
         <p className="text-sm leading-relaxed text-slate">
-          We sent a confirmation link to <span className="text-graphite">{email}</span>. Click it
-          to finish creating your account.
+          If an account exists for <span className="text-graphite">{email}</span>, we&rsquo;ve sent
+          a link to reset your password. Click it to choose a new one.
         </p>
+        <Link href="/login" className="mt-6 block text-center text-sm font-medium text-cobalt">
+          Back to log in
+        </Link>
       </AuthCard>
     );
   }
 
   return (
     <AuthCard
-      title="Create your account"
-      subtitle="Track your first competitor for free."
+      title="Reset your password"
+      subtitle="Enter your email and we'll send you a reset link."
       footer={
         <>
-          Already have an account?{' '}
+          Remembered it?{' '}
           <Link href="/login" className="font-medium text-cobalt">
             Log in
           </Link>
@@ -78,25 +64,13 @@ export default function SignupPage() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourstartup.com"
         />
-        <FormField
-          label="Password"
-          type="password"
-          autoComplete="new-password"
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="At least 6 characters"
-        />
-
-        {error && <p className="text-sm text-rose">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
           className="w-full rounded-md bg-cobalt px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
         >
-          {loading ? 'Creating account…' : 'Sign up'}
+          {loading ? 'Sending…' : 'Send reset link'}
         </button>
       </form>
     </AuthCard>

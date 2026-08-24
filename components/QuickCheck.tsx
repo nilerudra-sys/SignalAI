@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
+import { PriceReadout } from '@/components/PriceReadout';
 
 const EXAMPLES = ['linear.app', 'notion.so', 'vercel.com'];
 
@@ -105,7 +106,7 @@ export function QuickCheck() {
               )}
             </div>
 
-            <div className="px-3.5 py-4">
+            <div className="max-h-[420px] overflow-y-auto px-3.5 py-4">
               {!result && !loading && (
                 <p className="text-[13px] leading-relaxed text-slate-dim">
                   Results will show up here.
@@ -119,11 +120,7 @@ export function QuickCheck() {
               {result && !result.ok && (
                 <p className="text-[13px] leading-relaxed text-rose">{result.message}</p>
               )}
-              {result?.ok && (
-                <p className="whitespace-pre-line text-[13px] leading-relaxed text-graphite-soft">
-                  {result.excerpt}
-                </p>
-              )}
+              {result?.ok && <PriceReadout key={result.url} excerpt={result.excerpt} />}
             </div>
           </div>
 

@@ -61,10 +61,22 @@ async function scrapeCompetitor(supabase: SupabaseClient, competitor: Competitor
 
       if (insertError) {
         console.error(`\nFailed to save snapshot: ${insertError.message}`);
+        await supabase.from('scrape_attempts').insert({
+          competitor_id: competitor.id,
+          page_type: target.pageType,
+          status: 'error',
+          error_message: `Failed to save snapshot: ${insertError.message}`,
+        });
         continue;
       }
 
       console.log(`\nSaved snapshot (${target.pageType}).`);
+      await supabase.from('scrape_attempts').insert({
+        competitor_id: competitor.id,
+        page_type: target.pageType,
+        status: 'success',
+        attempted_at: result.fetchedAt,
+      });
 
       const { data: recent, error: recentError } = await supabase
         .from('snapshots')
@@ -121,7 +133,14 @@ async function scrapeCompetitor(supabase: SupabaseClient, competitor: Competitor
         }
       }
     } catch (err) {
-      console.error(`Failed to scrape ${target.url}: ${err instanceof Error ? err.message : err}`);
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`Failed to scrape ${target.url}: ${message}`);
+      await supabase.from('scrape_attempts').insert({
+        competitor_id: competitor.id,
+        page_type: target.pageType,
+        status: 'error',
+        error_message: message,
+      });
     }
   }
 }

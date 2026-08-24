@@ -13,6 +13,14 @@ export function relativeTime(isoDate: string | null | undefined): string {
   return `${days}d ago`;
 }
 
+export function shortDate(isoDate: string): string {
+  return new Date(isoDate).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
 export function nextMonday7am(): string {
   const now = new Date();
   const next = new Date(now);

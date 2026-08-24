@@ -2,35 +2,88 @@
 
 import { useState, type FormEvent } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { normalizeUrl } from '@/lib/discover-urls';
 import type { Competitor } from '@/types/competitor';
 
-function isValidUrl(value: string) {
-  try {
-    const url = new URL(value);
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
 type FieldErrors = Partial<Record<'name' | 'websiteUrl' | 'pricingPageUrl' | 'changelogUrl', string>>;
+
+type DiscoverResponse =
+  | { ok: true; name: string; websiteUrl: string; pricingUrl: string | null; changelogUrl: string | null }
+  | { ok: false; message: string };
+
+type Prefill = {
+  name?: string;
+  websiteUrl?: string;
+  pricingPageUrl?: string;
+  changelogUrl?: string;
+};
 
 export function AddCompetitorModal({
   userId,
   onClose,
   onCreated,
+  initial,
 }: {
   userId: string;
   onClose: () => void;
   onCreated: (competitor: Competitor) => void;
+  initial?: Prefill;
 }) {
-  const [name, setName] = useState('');
-  const [websiteUrl, setWebsiteUrl] = useState('');
-  const [pricingPageUrl, setPricingPageUrl] = useState('');
-  const [changelogUrl, setChangelogUrl] = useState('');
+  const [quickInput, setQuickInput] = useState('');
+  const [discovering, setDiscovering] = useState(false);
+  const [discoverError, setDiscoverError] = useState<string | null>(null);
+  const [discoverNote, setDiscoverNote] = useState<string | null>(
+    initial ? 'Review the details below before adding.' : null,
+  );
+
+  const [name, setName] = useState(initial?.name ?? '');
+  const [websiteUrl, setWebsiteUrl] = useState(initial?.websiteUrl ?? '');
+  const [pricingPageUrl, setPricingPageUrl] = useState(initial?.pricingPageUrl ?? '');
+  const [changelogUrl, setChangelogUrl] = useState(initial?.changelogUrl ?? '');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  async function handleDiscover() {
+    if (!quickInput.trim() || discovering) return;
+    setDiscovering(true);
+    setDiscoverError(null);
+    setDiscoverNote(null);
+
+    try {
+      const res = await fetch('/api/discover-competitor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: quickInput }),
+      });
+      const data = (await res.json()) as DiscoverResponse;
+
+      if (!data.ok) {
+        setDiscoverError(data.message);
+        return;
+      }
+
+      setName(data.name);
+      setWebsiteUrl(data.websiteUrl);
+      setPricingPageUrl(data.pricingUrl ?? '');
+      setChangelogUrl(data.changelogUrl ?? '');
+      setFieldErrors({});
+
+      const missing: string[] = [];
+      if (!data.pricingUrl) missing.push('pricing page');
+      if (!data.changelogUrl) missing.push('changelog');
+
+      setDiscoverNote(
+        missing.length === 0
+          ? 'Found their site, pricing page, and changelog — review below before adding.'
+          : `Found their site${data.pricingUrl ? ' and pricing page' : ''} — couldn't find a ${missing.join(' or ')} automatically. Add it below if they have one.`,
+      );
+    } catch {
+      setDiscoverError('Something went wrong searching for that company. Try again, or fill in the fields below manually.');
+    } finally {
+      setDiscovering(false);
+    }
+  }
 
   function validate(): FieldErrors {
     const errors: FieldErrors = {};
@@ -40,16 +93,16 @@ export function AddCompetitorModal({
     }
     if (!websiteUrl.trim()) {
       errors.websiteUrl = 'Enter a website URL.';
-    } else if (!isValidUrl(websiteUrl.trim())) {
-      errors.websiteUrl = 'Enter a valid URL, including https://';
+    } else if (!normalizeUrl(websiteUrl.trim())) {
+      errors.websiteUrl = 'Enter a valid domain, like acme.com';
     }
     if (!pricingPageUrl.trim()) {
       errors.pricingPageUrl = 'Enter a pricing page URL.';
-    } else if (!isValidUrl(pricingPageUrl.trim())) {
-      errors.pricingPageUrl = 'Enter a valid URL, including https://';
+    } else if (!normalizeUrl(pricingPageUrl.trim())) {
+      errors.pricingPageUrl = 'Enter a valid domain, like acme.com/pricing';
     }
-    if (changelogUrl.trim() && !isValidUrl(changelogUrl.trim())) {
-      errors.changelogUrl = 'Enter a valid URL, including https://';
+    if (changelogUrl.trim() && !normalizeUrl(changelogUrl.trim())) {
+      errors.changelogUrl = 'Enter a valid domain, like acme.com/changelog';
     }
 
     return errors;
@@ -71,9 +124,9 @@ export function AddCompetitorModal({
       .insert({
         user_id: userId,
         name: name.trim(),
-        website_url: websiteUrl.trim(),
-        pricing_page_url: pricingPageUrl.trim(),
-        changelog_url: changelogUrl.trim() || null,
+        website_url: normalizeUrl(websiteUrl.trim()),
+        pricing_page_url: normalizeUrl(pricingPageUrl.trim()),
+        changelog_url: changelogUrl.trim() ? normalizeUrl(changelogUrl.trim()) : null,
       })
       .select()
       .single();
@@ -130,6 +183,43 @@ export function AddCompetitorModal({
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 px-5 py-[18px]" noValidate>
+          <div className="flex flex-col gap-1.5 rounded-lg border border-hairline-input bg-paper-raised p-3">
+            <label className="text-[13px] font-medium text-graphite">Quick add</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={quickInput}
+                onChange={(e) => setQuickInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleDiscover();
+                  }
+                }}
+                placeholder="Company name or domain — e.g. claude.ai"
+                className="min-w-0 flex-1 rounded-md border border-hairline-input bg-paper-surface px-3 py-2 text-sm text-graphite outline-none placeholder:text-slate-faint focus:border-cobalt"
+              />
+              <button
+                type="button"
+                onClick={handleDiscover}
+                disabled={discovering || !quickInput.trim()}
+                className="shrink-0 rounded-md border border-graphite bg-graphite px-3 py-2 text-[13px] font-medium text-white disabled:opacity-60"
+              >
+                {discovering ? 'Searching…' : 'Find pages'}
+              </button>
+            </div>
+            {discoverError && <p className="text-xs text-rose">{discoverError}</p>}
+            {discoverNote && <p className="text-xs text-slate">{discoverNote}</p>}
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <div className="h-px flex-1 bg-hairline-soft" />
+            <span className="text-[11px] uppercase tracking-wide text-slate-faint">
+              or fill in manually
+            </span>
+            <div className="h-px flex-1 bg-hairline-soft" />
+          </div>
+
           <Field
             label="Competitor name"
             value={name}
@@ -141,14 +231,14 @@ export function AddCompetitorModal({
             label="Website URL"
             value={websiteUrl}
             onChange={setWebsiteUrl}
-            placeholder="https://acme.com"
+            placeholder="acme.com"
             error={fieldErrors.websiteUrl}
           />
           <Field
             label="Pricing page URL"
             value={pricingPageUrl}
             onChange={setPricingPageUrl}
-            placeholder="https://acme.com/pricing"
+            placeholder="acme.com/pricing"
             error={fieldErrors.pricingPageUrl}
           />
           <Field
@@ -156,7 +246,7 @@ export function AddCompetitorModal({
             optional
             value={changelogUrl}
             onChange={setChangelogUrl}
-            placeholder="https://acme.com/changelog"
+            placeholder="acme.com/changelog"
             error={fieldErrors.changelogUrl}
           />
 

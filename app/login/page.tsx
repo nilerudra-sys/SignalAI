@@ -4,15 +4,16 @@ import { Suspense, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { safeRedirectPath } from '@/lib/safeRedirect';
 import { AuthCard } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
-import { GoogleButton } from '@/components/auth/GoogleButton';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectedFrom = searchParams.get('redirectedFrom');
   const oauthError = searchParams.get('error');
+  const resetSuccess = searchParams.get('reset') === 'success';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,7 +36,7 @@ function LoginForm() {
       return;
     }
 
-    router.push(redirectedFrom || '/dashboard');
+    router.push(safeRedirectPath(redirectedFrom));
     router.refresh();
   }
 
@@ -52,6 +53,12 @@ function LoginForm() {
         </>
       }
     >
+      {resetSuccess && (
+        <p className="mb-4 rounded-md border border-moss-line bg-moss-tint px-3 py-2.5 text-sm text-moss">
+          Password updated. Log in with your new password.
+        </p>
+      )}
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <FormField
           label="Email"
@@ -62,15 +69,20 @@ function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@yourstartup.com"
         />
-        <FormField
-          label="Password"
-          type="password"
-          autoComplete="current-password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="••••••••"
-        />
+        <div className="flex flex-col gap-1.5">
+          <FormField
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+          />
+          <Link href="/forgot-password" className="self-end text-xs font-medium text-cobalt">
+            Forgot password?
+          </Link>
+        </div>
 
         {error && <p className="text-sm text-rose">{error}</p>}
 
@@ -82,14 +94,6 @@ function LoginForm() {
           {loading ? 'Logging in…' : 'Log in'}
         </button>
       </form>
-
-      <div className="my-6 flex items-center gap-3">
-        <div className="h-px flex-1 bg-hairline" />
-        <span className="text-xs text-slate-dim">OR</span>
-        <div className="h-px flex-1 bg-hairline" />
-      </div>
-
-      <GoogleButton />
     </AuthCard>
   );
 }

@@ -25,3 +25,12 @@ export type DigestEvent = {
   detected_at: string;
   sent_at: string | null;
 };
+
+export type ScrapeAttempt = {
+  id: string;
+  competitor_id: string;
+  page_type: 'pricing' | 'changelog';
+  status: 'success' | 'error';
+  error_message: string | null;
+  attempted_at: string;
+};

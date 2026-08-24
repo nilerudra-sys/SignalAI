@@ -26,8 +26,6 @@ if (!RESEND_API_KEY) {
 const supabase = createClient(SUPABASE_URL, SECRET_KEY);
 const resend = new Resend(RESEND_API_KEY);
 
-const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
-
 type DigestEventRow = {
   id: string;
   competitor_id: string;
@@ -43,15 +41,16 @@ function weekLabel(): string {
 }
 
 async function main() {
-  // Assumes this runs at least weekly, so "unsent" and "from the past week"
-  // are effectively the same set — nothing older sits around unsent.
-  const sevenDaysAgo = new Date(Date.now() - SEVEN_DAYS_MS).toISOString();
-
+  // Every unsent event goes out, regardless of age — NOT bounded to "the
+  // past week." A bounded window here previously meant a skipped or failed
+  // run (Actions outage, Resend down mid-run) permanently dropped that
+  // week's events once they aged out of the window on the next run, with
+  // no error or log. sent_at is the only thing that should ever exclude a
+  // row from this query.
   const { data, error } = await supabase
     .from('digest_events')
     .select('id, competitor_id, change_summary, change_type, why_it_matters, detected_at, competitor:competitors(id, name, user_id)')
     .is('sent_at', null)
-    .gte('detected_at', sevenDaysAgo)
     .order('detected_at', { ascending: false });
 
   if (error) {
@@ -62,7 +61,7 @@ async function main() {
   const events = (data ?? []) as unknown as DigestEventRow[];
 
   if (events.length === 0) {
-    console.log('No unsent digest events from the past week. Nothing to send.');
+    console.log('No unsent digest events. Nothing to send.');
     return;
   }
 

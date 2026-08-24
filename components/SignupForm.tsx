@@ -11,17 +11,37 @@ export function SignupForm({
 }) {
   const inputId = useId();
   const [email, setEmail] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || submitting) return;
 
-    // No backend yet — record the intent locally so it's visible during development.
-    console.log('[signal] waitlist signup', { email, source, at: new Date().toISOString() });
+    setSubmitting(true);
+    setError(null);
 
-    setSubmitted(true);
-    setEmail('');
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), source }),
+      });
+      const data = (await res.json()) as { ok: boolean; message?: string };
+
+      if (!data.ok) {
+        setError(data.message ?? 'Something went wrong. Try again.');
+        return;
+      }
+
+      setSubmitted(true);
+      setEmail('');
+    } catch {
+      setError('Something went wrong. Try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -41,17 +61,19 @@ export function SignupForm({
         />
         <button
           type="submit"
-          className={`shrink-0 rounded-lg px-5 py-3 text-[14.5px] font-medium text-white transition-opacity hover:opacity-90 ${
+          disabled={submitting}
+          className={`shrink-0 rounded-lg px-5 py-3 text-[14.5px] font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60 ${
             variant === 'accent' ? 'bg-cobalt' : 'bg-graphite'
           }`}
         >
-          Join the waitlist
+          {submitting ? 'Joining…' : 'Join the waitlist'}
         </button>
       </form>
-      <p className="text-[12.5px] text-slate-dim">
-        {submitted
-          ? "You're on the list — we'll email you when Signal opens up."
-          : 'Free while in beta. One email a week, no other mail, ever.'}
+      <p className={`text-[12.5px] ${error ? 'text-rose' : 'text-slate-dim'}`}>
+        {error ??
+          (submitted
+            ? "You're on the list — we'll email you when Signal opens up."
+            : 'Free while in beta. One email a week, no other mail, ever.')}
       </p>
     </div>
   );
