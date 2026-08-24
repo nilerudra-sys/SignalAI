@@ -72,8 +72,8 @@ export function SignupForm({
       <p className={`text-[12.5px] ${error ? 'text-rose' : 'text-slate-dim'}`}>
         {error ??
           (submitted
-            ? "You're on the list — we'll email you when Signal opens up."
-            : 'Free while in beta. One email a week, no other mail, ever.')}
+            ? "You're on the list — we'll email you when the paid plan opens."
+            : "No spam — we'll only email you when the paid plan opens.")}
       </p>
     </div>
   );

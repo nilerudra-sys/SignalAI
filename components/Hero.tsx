@@ -1,4 +1,4 @@
-import { SignupForm } from './SignupForm';
+import Link from 'next/link';
 
 const PILLARS = [
   { key: 'PRICING', text: 'Tier and price changes, caught the day they ship' },
@@ -37,7 +37,21 @@ export function Hero() {
             ))}
           </div>
 
-          <SignupForm source="hero" />
+          <div className="flex w-full flex-col gap-2.5">
+            <div className="flex gap-2.5 border-b border-hairline-soft pb-2.5 text-sm text-graphite-soft">
+              <span className="shrink-0 font-mono text-[11px] text-cobalt">TRACK RECORD</span>
+              <span>184,000+ competitor pages read so far, still run by one person.</span>
+            </div>
+            <Link
+              href="/signup"
+              className="inline-flex items-center justify-center rounded-lg bg-graphite px-5 py-3 text-[14.5px] font-medium text-white transition-opacity hover:opacity-90"
+            >
+              Start tracking free
+            </Link>
+            <p className="text-[12.5px] text-slate-dim">
+              Free for 1 competitor. No card required.
+            </p>
+          </div>
         </div>
       </div>
     </section>

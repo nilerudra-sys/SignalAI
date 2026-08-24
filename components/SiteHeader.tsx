@@ -37,7 +37,7 @@ export async function SiteHeader() {
           {user ? (
             <Link
               href="/dashboard"
-              className="rounded-lg bg-cobalt px-3.5 py-2 text-[13.5px] font-medium text-white"
+              className="rounded-lg bg-graphite px-3.5 py-2 text-[13.5px] font-medium text-white"
             >
               Dashboard
             </Link>
@@ -48,7 +48,7 @@ export async function SiteHeader() {
               </Link>
               <Link
                 href="/dashboard"
-                className="rounded-lg bg-cobalt px-3.5 py-2 text-[13.5px] font-medium text-white"
+                className="rounded-lg bg-graphite px-3.5 py-2 text-[13.5px] font-medium text-white"
               >
                 Access dashboard
               </Link>
