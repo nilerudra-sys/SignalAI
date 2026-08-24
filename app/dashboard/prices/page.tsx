@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { PriceSearch } from '@/components/dashboard/PriceSearch';
+import { PriceReadout } from '@/components/PriceReadout';
 import { isAdminEmail } from '@/lib/admin';
 import { hostnameOf } from '@/lib/hostname';
 import { relativeTime } from '@/lib/relativeTime';
@@ -93,11 +94,9 @@ export default async function PricesPage() {
                         {snap ? relativeTime(snap.scraped_at) : 'not checked yet'}
                       </span>
                     </div>
-                    <div className="px-3.5 py-3.5">
+                    <div className="max-h-[320px] overflow-y-auto px-3.5 py-3.5">
                       {snap ? (
-                        <p className="line-clamp-4 whitespace-pre-line text-[13px] leading-relaxed text-graphite-soft">
-                          {snap.raw_text.slice(0, 400)}
-                        </p>
+                        <PriceReadout key={snap.id} excerpt={snap.raw_text} />
                       ) : (
                         <p className="text-[13px] leading-relaxed text-slate-dim">
                           No pricing snapshot yet — this fills in after the next scrape.

@@ -56,12 +56,26 @@ export function PriceReadout({ excerpt }: { excerpt: string }) {
   // same $10). Keying on name+amount only (not unit) still can't collide
   // for two genuinely different tiers, and actually catches the duplicate.
   const seenPlans = new Set<string>();
-  const plans = allPlans.filter((p) => {
+  const dedupedPlans = allPlans.filter((p) => {
     const key = `${p.name?.trim().toLowerCase() ?? ''}|${p.amount}`;
     if (seenPlans.has(key)) return false;
     seenPlans.add(key);
     return true;
   });
+
+  // A metered/usage-pricing table (Vercel's per-GB, per-request overage
+  // rows, etc.) can still produce dozens of "plan" tiles even after the
+  // price-regex tightening above — each is a real $ line, just not a
+  // subscription tier. A named tile ("Hobby", "Pro") is reliably a real
+  // tier; an unnamed one (a bare price with no preceding short label) is
+  // usually a stray usage row, so prioritize named tiles when trimming to a
+  // number that still renders as a readable side-by-side grid instead of
+  // dozens of columns crushed into unreadable overlapping text.
+  const MAX_PLAN_TILES = 6;
+  const plans = [...dedupedPlans.filter((p) => p.name), ...dedupedPlans.filter((p) => !p.name)].slice(
+    0,
+    MAX_PLAN_TILES,
+  );
 
   // Plan descriptions and feature bullets are both just "detail lines" —
   // pool them together, dedupe (case-insensitive), then split by length.

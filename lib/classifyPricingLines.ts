@@ -13,7 +13,12 @@ export type ClassifiedLine =
   | { kind: 'feature'; text: string }
   | { kind: 'muted'; text: string };
 
-const PRICE_RE = /\$\s?\d[\d,.]*|(\bper\b|\/)\s*(month|mo\.?|year|yr\.?|user|seat|member)/i;
+// Requires an actual "$" — the earlier version also matched a bare
+// "per/month"-style fragment with no dollar sign, which meant metered-usage
+// line items ("1M / month included", "200k / month included") on
+// consumption-pricing pages (Vercel's overage table, etc.) were misread as
+// separate plan tiers. A real price always carries a $ amount somewhere.
+const PRICE_RE = /\$\s?\d[\d,.]*/;
 const SECTION_RE = /^(includes?|features?|what'?s included|plans?)\s*:?\s*$/i;
 const CTA_RE =
   /^(sign up|get started|start( your)?( free)?( trial)?|try( it)? free|contact (sales|us)|book a demo|learn more|see (all )?plans|upgrade( now)?|subscribe|choose( this)? plan|select plan|buy now|talk to sales)$/i;
