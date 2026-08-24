@@ -49,7 +49,7 @@ export function Hero() {
               Start tracking free
             </Link>
             <p className="text-[12.5px] text-slate-dim">
-              Free for 1 competitor. No card required.
+              Free for 2 competitors. No card required.
             </p>
           </div>
         </div>

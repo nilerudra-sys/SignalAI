@@ -1,8 +1,8 @@
 const TIERS = [
   {
     name: 'Free',
-    detail: 'Track 1 competitor',
-    description: 'The full weekly digest for a single competitor. No card required.',
+    detail: 'Track 2 competitors',
+    description: 'The full weekly digest for up to two competitors. No card required.',
     accent: false,
   },
   {
