@@ -32,7 +32,18 @@ export function AuthHashHandler() {
 
     const supabase = createClient();
     supabase.auth.setSession({ access_token, refresh_token }).then(() => {
-      router.replace(type === 'recovery' ? '/reset-password' : '/dashboard');
+      if (type === 'recovery') {
+        // /reset-password only checks auth client-side, so a soft
+        // navigation is fine here.
+        router.replace('/reset-password');
+      } else {
+        // /dashboard is gated by middleware reading cookies server-side.
+        // setSession() writes the session to a cookie, but a soft
+        // client-side navigation's request can fire before that cookie is
+        // reliably attached (seen in production, not locally) — a hard
+        // navigation guarantees the server reads a fresh Cookie header.
+        window.location.href = '/dashboard';
+      }
     });
   }, [router]);
 
