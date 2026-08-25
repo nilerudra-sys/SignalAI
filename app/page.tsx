@@ -6,12 +6,12 @@ import { PricingTeaser } from '@/components/PricingTeaser';
 import { About } from '@/components/About';
 import { ClosingSignup } from '@/components/ClosingSignup';
 import { SiteFooter } from '@/components/SiteFooter';
-import { RecoveryHashHandler } from '@/components/auth/RecoveryHashHandler';
+import { AuthHashHandler } from '@/components/auth/AuthHashHandler';
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col bg-paper font-sans text-graphite">
-      <RecoveryHashHandler />
+      <AuthHashHandler />
       <SiteHeader />
       <Hero />
       <QuickCheck />
