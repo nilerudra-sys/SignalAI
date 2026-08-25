@@ -2,6 +2,15 @@ import { ImageResponse } from 'next/og';
 
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
+// Without this, Next statically pre-renders this route at build time —
+// which runs next/og's bundled font-loading code as part of `next build`
+// itself. On this Windows dev machine that hits a file:// URL bug in
+// next/og's default-font resolution and fails the build outright (exit
+// code 1, confirmed locally). Forcing dynamic rendering defers execution
+// to actual request time in the deployed runtime instead, which is also
+// simply more correct for an image route that fetches a font over the
+// network on every cold render.
+export const dynamic = 'force-dynamic';
 
 // Satori (next/og's renderer) can't use system/CSS fonts — it needs real
 // font bytes. next/og's own default-font auto-load hits a file:// URL bug
