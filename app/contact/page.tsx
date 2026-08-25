@@ -4,7 +4,9 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { ContactForm } from '@/components/ContactForm';
 
 export const metadata: Metadata = {
-  title: 'Contact — Signal',
+  // Root layout's title template already appends "— Signal" — this was
+  // "Contact — Signal" here too, doubling up to "Contact — Signal — Signal".
+  title: 'Contact',
   description: 'Write to Signal and Rudra reads it himself.',
 };
 
