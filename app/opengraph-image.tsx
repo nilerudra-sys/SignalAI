@@ -3,34 +3,25 @@ import { ImageResponse } from 'next/og';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 // Without this, Next statically pre-renders this route at build time —
-// which runs next/og's bundled font-loading code as part of `next build`
-// itself. On this Windows dev machine that hits a file:// URL bug in
-// next/og's default-font resolution and fails the build outright (exit
-// code 1, confirmed locally). Forcing dynamic rendering defers execution
-// to actual request time in the deployed runtime instead, which is also
-// simply more correct for an image route that fetches a font over the
-// network on every cold render.
+// which runs next/og's font-loading code as part of `next build` itself.
+// On this Windows dev machine that hits a file:// URL bug in that
+// resolution and fails the build outright (exit code 1, confirmed
+// locally). Forcing dynamic rendering defers execution to actual request
+// time in the deployed runtime instead.
 export const dynamic = 'force-dynamic';
 
-// Satori (next/og's renderer) can't use system/CSS fonts — it needs real
-// font bytes. next/og's own default-font auto-load hits a file:// URL bug
-// on Windows dev paths containing a space (this repo's "signal ai"
-// folder), so the font is fetched explicitly here instead — the standard
-// documented pattern for next/og, and it sidesteps that platform bug
-// entirely since it's a network fetch, not local file resolution.
-async function loadInter(): Promise<ArrayBuffer> {
-  const res = await fetch(
-    'https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2',
-  );
-  return res.arrayBuffer();
-}
+// Deliberately NOT supplying a custom font here (an earlier version fetched
+// one from Google Fonts) — that added a fragile external dependency and
+// still crashed at runtime in production. next/og's own default font is
+// resolved from a normal Linux path in the deployed runtime (only the
+// Windows-path-with-a-space case above is broken, and force-dynamic
+// already avoids hitting that at build time), so relying on it is both
+// simpler and more robust than a hand-picked font URL.
 
 // Matches the real brand tokens in tailwind.config.ts (paper/graphite/
 // cobalt/slate/hairline) and the 5-bar SignalLogo shape used everywhere
 // else in the app, rather than inventing separate share-image branding.
-export default async function OpengraphImage() {
-  const interRegular = await loadInter();
-
+export default function OpengraphImage() {
   const bars = [
     { h: 70, c: '#c3c5c0' },
     { h: 140, c: '#9b9e9a' },
@@ -50,7 +41,6 @@ export default async function OpengraphImage() {
           justifyContent: 'space-between',
           backgroundColor: '#f4f4f2',
           padding: '72px',
-          fontFamily: 'Inter',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -106,6 +96,6 @@ export default async function OpengraphImage() {
         </div>
       </div>
     ),
-    { ...size, fonts: [{ name: 'Inter', data: interRegular, style: 'normal', weight: 700 }] },
+    { ...size },
   );
 }
