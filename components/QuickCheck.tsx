@@ -131,7 +131,7 @@ export function QuickCheck() {
               </p>
               <Link
                 href="/signup"
-                className="shrink-0 rounded-lg bg-cobalt px-3.5 py-2 text-[13px] font-medium text-white"
+                className="shrink-0 rounded-lg border border-graphite px-3.5 py-2 text-[13px] font-medium text-graphite"
               >
                 Sign up free
               </Link>

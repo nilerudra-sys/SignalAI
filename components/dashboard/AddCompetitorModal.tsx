@@ -263,7 +263,7 @@ export function AddCompetitorModal({
             <button
               type="submit"
               disabled={loading}
-              className="rounded-lg bg-cobalt px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="rounded-lg bg-graphite px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
             >
               {loading ? 'Adding…' : 'Add competitor'}
             </button>

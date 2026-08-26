@@ -19,12 +19,12 @@ export function Hero() {
           Your competitors moved this week. Here&rsquo;s the one-page version.
         </h1>
 
-        <div className="mt-6 grid grid-cols-1 gap-6 border-t border-hairline-soft pt-5 sm:grid-cols-3">
-          <p className="text-balance text-base leading-relaxed text-slate">
-            Pricing pages, changelogs, and job boards for every competitor you name — checked
-            continuously, summarised in plain English, in your inbox once a week.
-          </p>
+        <p className="mt-4 max-w-[54ch] text-balance text-[17px] leading-relaxed text-graphite-soft sm:text-[19px]">
+          Signal watches your competitors&rsquo; pricing pages, changelogs, and job boards — then
+          emails you a plain-English summary of what changed, every Monday.
+        </p>
 
+        <div className="mt-6 grid grid-cols-1 gap-6 border-t border-hairline-soft pt-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2.5">
             {PILLARS.map((p) => (
               <div
@@ -44,7 +44,7 @@ export function Hero() {
             </div>
             <Link
               href="/signup"
-              className="inline-flex items-center justify-center rounded-lg bg-graphite px-5 py-3 text-[14.5px] font-medium text-white transition-opacity hover:opacity-90"
+              className="inline-flex items-center justify-center rounded-lg bg-graphite px-6 py-3.5 text-[15.5px] font-semibold text-white transition-opacity hover:opacity-90"
             >
               Start tracking free
             </Link>

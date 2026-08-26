@@ -44,7 +44,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* The server has no way to see a URL fragment, so a Supabase
+            auth-email link (#access_token=...) always gets the normal
+            page's full HTML first — the browser paints that raw markup
+            before any React JS has even loaded, let alone hydrated and run
+            AuthHashHandler's redirect logic. That's a real bug seen live:
+            it reads as "the link just took me to the website" for the
+            second-plus it takes JS to catch up. This blocking script runs
+            during HTML parsing, before first paint, and hides the page
+            immediately when it sees that fragment; AuthHashHandler restores
+            visibility once it's ready to show its own "Signing you in"
+            overlay in the same tick. The timeout is a safety net only, in
+            case that handoff never happens for some reason. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(window.location.hash.indexOf('access_token=')!==-1){document.documentElement.style.visibility='hidden';setTimeout(function(){document.documentElement.style.visibility='';},4000);}}catch(e){}`,
+          }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
     </html>
   );

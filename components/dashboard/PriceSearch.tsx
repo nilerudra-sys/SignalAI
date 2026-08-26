@@ -180,7 +180,7 @@ export function PriceSearch({
                   type="button"
                   onClick={handleTrack}
                   disabled={preparing}
-                  className="rounded-lg bg-cobalt px-3.5 py-2 text-[13px] font-medium text-white disabled:opacity-60"
+                  className="rounded-lg bg-graphite px-3.5 py-2 text-[13px] font-medium text-white disabled:opacity-60"
                 >
                   {preparing ? 'Preparing…' : 'Track this competitor'}
                 </button>

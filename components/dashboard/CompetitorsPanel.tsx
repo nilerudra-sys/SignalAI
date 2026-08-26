@@ -237,7 +237,7 @@ export function CompetitorsPanel({
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="shrink-0 rounded-lg bg-cobalt px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            className="shrink-0 rounded-lg bg-graphite px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
             Add competitor
           </button>
@@ -316,7 +316,7 @@ export function CompetitorsPanel({
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="mt-[18px] rounded-lg bg-cobalt px-[18px] py-2.5 text-sm font-medium text-white"
+            className="mt-[18px] rounded-lg border border-graphite px-[18px] py-2.5 text-sm font-medium text-graphite"
           >
             Add competitor
           </button>
