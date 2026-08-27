@@ -10,47 +10,53 @@ export async function SiteHeader() {
 
   return (
     <div className="sticky top-0 z-40 border-b border-hairline bg-paper/90 backdrop-blur-sm">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-6 py-3.5 sm:px-8">
+      <div className="mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-7 py-3.5">
         <div className="flex min-w-0 items-center gap-2.5">
-          <SignalLogo className="h-[21px] w-[21px]" />
+          <SignalLogo className="h-5 w-5" />
           <Link href="/" className="text-base font-semibold tracking-tight text-graphite">
             Signal
           </Link>
-          <span className="hidden whitespace-nowrap border-l border-hairline pl-2.5 font-mono text-[11px] text-slate-dim sm:inline">
-            competitor digests
-          </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <a
-            href="/#about"
-            className="hidden px-3 py-1.5 text-[13.5px] font-medium text-graphite-soft sm:inline"
+            href="/#how"
+            className="hidden rounded-md px-2.5 py-1.5 text-[13.5px] font-medium text-slate transition-colors hover:text-graphite sm:inline"
           >
-            About
+            How it works
           </a>
-          <Link
-            href="/contact"
-            className="hidden px-3 py-1.5 text-[13.5px] font-medium text-graphite-soft sm:inline"
+          <a
+            href="/#sample"
+            className="hidden rounded-md px-2.5 py-1.5 text-[13.5px] font-medium text-slate transition-colors hover:text-graphite sm:inline"
           >
-            Contact
-          </Link>
+            Sample digest
+          </a>
+          <a
+            href="/#pricing"
+            className="hidden rounded-md px-2.5 py-1.5 text-[13.5px] font-medium text-slate transition-colors hover:text-graphite sm:inline"
+          >
+            Pricing
+          </a>
           {user ? (
             <Link
               href="/dashboard"
-              className="rounded-lg border border-graphite px-3.5 py-2 text-[13.5px] font-medium text-graphite"
+              className="ml-2 rounded-lg border border-graphite px-4 py-2 text-[13.5px] font-medium text-graphite"
             >
               Dashboard
             </Link>
           ) : (
             <>
-              <Link href="/login" className="px-3 py-1.5 text-[13.5px] font-medium text-graphite">
+              <Link
+                href="/login"
+                className="hidden px-2.5 py-1.5 text-[13.5px] font-medium text-slate transition-colors hover:text-graphite sm:inline"
+              >
                 Log in
               </Link>
               <Link
-                href="/dashboard"
-                className="rounded-lg border border-graphite px-3.5 py-2 text-[13.5px] font-medium text-graphite"
+                href="/signup"
+                className="ml-2 rounded-lg border border-graphite px-4 py-2 text-[13.5px] font-medium text-graphite"
               >
-                Access dashboard
+                Get the digest
               </Link>
             </>
           )}

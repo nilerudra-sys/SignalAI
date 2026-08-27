@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 type DigestLine = { sign: '+' | '−'; text: string; strike?: boolean };
 
 type DigestEntry = {
@@ -63,24 +65,28 @@ function DigestRow({ sign, text, strike }: DigestLine) {
 
 export function SampleDigest() {
   return (
-    <section className="border-b border-hairline">
-      <div className="mx-auto max-w-[1000px] px-6 py-14 sm:px-8 sm:py-16">
-        <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
-          <div>
-            <h2 className="text-[24px] font-semibold tracking-tight text-graphite sm:text-[32px]">
-              What actually lands in your inbox
+    <section id="sample" className="scroll-mt-16 border-b border-hairline bg-paper">
+      <div className="mx-auto max-w-[1000px] px-7 py-14 sm:py-16">
+        <div className="border-b border-hairline pb-2.5 font-mono text-[11px] uppercase tracking-wide text-slate-dim">
+          03 — What lands in your inbox
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-baseline justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="max-w-[20ch] text-balance text-[24px] font-semibold leading-[1.1] tracking-tight text-graphite sm:text-[32px]">
+              One entry per change. Nothing else.
             </h2>
-            <p className="mt-2 max-w-[54ch] text-balance text-[15px] text-slate">
-              One entry per competitor: the raw change we detected, then what it means for you.
-              Sample below — illustrative, not a real customer.
+            <p className="mt-2.5 max-w-[54ch] text-balance text-[15.5px] leading-relaxed text-slate">
+              The diff we detected, then what it means for you. A full sample — illustrative,
+              not a real customer.
             </p>
           </div>
-          <span className="rounded-md border border-hairline bg-paper-raised px-2.5 py-1 font-mono text-[11.5px] text-slate-dim">
+          <span className="shrink-0 rounded-md border border-hairline bg-paper-raised px-2.5 py-1 font-mono text-[11.5px] text-slate-dim">
             SAMPLE
           </span>
         </div>
 
-        <div className="overflow-hidden rounded-xl border border-hairline-card bg-paper-surface shadow-[0_1px_2px_rgba(20,24,28,0.04),0_16px_40px_-28px_rgba(20,24,28,0.25)]">
+        <div className="mt-7 overflow-hidden rounded-xl border border-hairline-card bg-paper-surface shadow-[0_1px_2px_rgba(20,24,28,0.04),0_16px_40px_-28px_rgba(20,24,28,0.25)]">
           <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-hairline-soft bg-paper-raised px-[18px] py-4">
             <div className="min-w-0">
               <div className="text-[15px] font-semibold tracking-tight text-graphite">
@@ -130,9 +136,9 @@ export function SampleDigest() {
             <span className="text-[13px] text-slate">
               Nothing else changed. That&rsquo;s the whole email.
             </span>
-            <a href="#waitlist" className="text-[13px] font-medium text-cobalt hover:text-cobalt-hover">
+            <Link href="/signup" className="text-[13px] font-medium text-cobalt hover:text-cobalt-hover">
               Get this weekly &rarr;
-            </a>
+            </Link>
           </div>
         </div>
       </div>

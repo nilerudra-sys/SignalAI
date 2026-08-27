@@ -45,15 +45,19 @@ export function QuickCheck() {
   }
 
   return (
-    <section className="border-b border-hairline bg-paper-surface">
-      <div className="mx-auto grid max-w-5xl grid-cols-1 items-start gap-8 px-6 py-12 sm:px-8 sm:py-14 lg:grid-cols-2">
+    <section id="try" className="scroll-mt-16 border-b border-hairline bg-paper-surface">
+      <div className="mx-auto max-w-[1180px] px-7 py-14 sm:py-16">
+        <div className="border-b border-hairline-soft pb-2.5 font-mono text-[11px] uppercase tracking-wide text-slate-dim">
+          02 — Try it now, no account
+        </div>
+        <div className="mt-7 grid grid-cols-1 items-start gap-8 lg:grid-cols-2">
         <div className="min-w-0">
-          <h2 className="text-[22px] font-semibold tracking-tight text-graphite sm:text-[28px]">
-            Check a company&rsquo;s pricing page instantly
+          <h2 className="max-w-[20ch] text-balance text-[26px] font-semibold leading-[1.1] tracking-tight text-graphite sm:text-[34px]">
+            Read any company&rsquo;s pricing page right now
           </h2>
-          <p className="mt-2.5 max-w-[46ch] text-balance text-[15px] leading-relaxed text-slate">
-            Enter a domain. We&rsquo;ll do a live check of their pricing page right now — no
-            account needed.
+          <p className="mt-3 max-w-[46ch] text-balance text-[15.5px] leading-relaxed text-slate">
+            Paste a domain. Signal finds the pricing page and reads the tiers — the same reader
+            that runs on your watchlist.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-4 flex max-w-[460px] flex-wrap gap-2">
@@ -137,6 +141,7 @@ export function QuickCheck() {
               </Link>
             </div>
           )}
+        </div>
         </div>
       </div>
     </section>

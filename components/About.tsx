@@ -19,33 +19,32 @@ const FACTS = [
   { label: 'Started', value: 'Jan 2026, as a cron job' },
   { label: 'Team', value: '1' },
   { label: 'Based in', value: 'Pune, India' },
-  { label: 'Checks', value: 'Every Monday, 07:00 UTC' },
+  { label: 'Status', value: 'Open beta' },
+  { label: 'Price', value: 'Free while in beta' },
 ];
 
 export function About() {
   return (
-    <section id="about" className="scroll-mt-16 border-b border-hairline">
-      <div className="mx-auto max-w-[1000px] px-6 py-14 sm:px-8 sm:py-16">
-        <div className="border-b border-hairline pb-2.5 font-mono text-[11px] uppercase tracking-wide text-slate-dim">
-          About Signal
+    <section id="about" className="scroll-mt-16 border-b border-hairline bg-paper-surface">
+      <div className="mx-auto max-w-[1000px] px-7 py-14 sm:py-16">
+        <div className="border-b border-hairline-soft pb-2.5 font-mono text-[11px] uppercase tracking-wide text-slate-dim">
+          06 — Who builds it
         </div>
 
         <div className="mt-6 grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-11">
           <div className="min-w-0">
-            <h2 className="text-balance max-w-[26ch] text-[24px] font-semibold tracking-tight text-graphite sm:text-[28px] md:text-[30px]">
-              Competitive intelligence, sized for a team of one
+            <h2 className="text-balance max-w-[24ch] text-[24px] font-semibold leading-[1.12] tracking-tight text-graphite sm:text-[34px]">
+              One person, one product, no roadmap theatre
             </h2>
-            <p className="mt-3.5 max-w-[58ch] text-balance text-[15px] leading-relaxed text-graphite-soft">
-              Signal watches the pages your competitors actually change — pricing, changelog,
-              careers — and re-reads them every Monday. When something moves, it records the
-              diff, works out whether it matters, and holds it until then. You get one email:
-              what changed, and what you should do about it.
+            <p className="mt-4 max-w-[56ch] text-balance text-[15.5px] leading-relaxed text-graphite-soft">
+              Signal started as a script Rudra ran on his own competitors every Monday morning.
+              It is still built and maintained by one person, which is the reason it stays this
+              small: every feature has to justify itself to a founder with no time.
             </p>
-            <p className="mt-3.5 max-w-[58ch] text-balance text-[15px] leading-relaxed text-slate">
-              The enterprise tools in this category start around $20,000 a year and assume you
-              have an analyst to feed them. Most founders don&rsquo;t. They have a browser with
-              nine competitor tabs and a nagging feeling they missed something. Signal is that
-              habit, automated — no dashboards to tend, no alert firehose, one page a week.
+            <p className="mt-3.5 max-w-[56ch] text-balance text-[15px] leading-relaxed text-slate">
+              It watches the pages your competitors actually change — pricing and changelog —
+              and re-reads them every Monday. When something moves, it records the diff, works
+              out whether it matters, and holds it until then.
             </p>
 
             <div className="mt-5 grid grid-cols-1 gap-3.5 border-t border-hairline-soft pt-4 sm:grid-cols-3">
@@ -62,11 +61,8 @@ export function About() {
             </div>
           </div>
 
-          <div className="min-w-0 overflow-hidden rounded-xl border border-hairline-card bg-paper-surface">
-            <div className="border-b border-hairline-soft bg-paper-raised px-4 py-2.5 font-mono text-[10.5px] uppercase tracking-wide text-slate-dim">
-              Who builds it
-            </div>
-            <div className="p-4">
+          <div className="min-w-0 overflow-hidden rounded-xl border border-hairline-card bg-paper-raised">
+            <div className="p-[18px]">
               <div className="flex items-center gap-3">
                 <span className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full border border-cobalt-tint-border bg-cobalt-tint text-[15px] font-semibold tracking-tight text-cobalt">
                   RN
@@ -80,12 +76,6 @@ export function About() {
                   </div>
                 </div>
               </div>
-
-              <p className="mt-3.5 text-balance text-[14px] leading-relaxed text-graphite-soft">
-                Signal started as a script Rudra ran on his own competitors every Monday morning.
-                It is still built and maintained by one person, which is the reason it stays this
-                small: every feature has to justify itself to a founder with no time.
-              </p>
 
               <div className="mt-4 flex flex-col gap-2 border-t border-hairline-soft pt-3.5">
                 {FACTS.map((f) => (

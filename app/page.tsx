@@ -1,7 +1,9 @@
 import { SiteHeader } from '@/components/SiteHeader';
 import { Hero } from '@/components/Hero';
+import { HowItWorks } from '@/components/HowItWorks';
 import { QuickCheck } from '@/components/QuickCheck';
 import { SampleDigest } from '@/components/SampleDigest';
+import { WhyNotEnterprise } from '@/components/WhyNotEnterprise';
 import { PricingTeaser } from '@/components/PricingTeaser';
 import { About } from '@/components/About';
 import { ClosingSignup } from '@/components/ClosingSignup';
@@ -14,8 +16,10 @@ export default function Home() {
       <AuthHashHandler />
       <SiteHeader />
       <Hero />
+      <HowItWorks />
       <QuickCheck />
       <SampleDigest />
+      <WhyNotEnterprise />
       <PricingTeaser />
       <About />
       <ClosingSignup />
